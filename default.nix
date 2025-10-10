@@ -37,6 +37,10 @@
                 app='${exe}'
                 path='${builtins.unsafeDiscardStringContext exePath}'
 
+                if which "$app" 2>&1 >/dev/null; then
+                  exec "$app" "$@"
+                fi
+
                 if [[ ! -e $path ]]; then
                     noteId=$(${notify-send} -t 0 -p "Realizing $app …")
                     trap "${notify-send} -r '$noteId' 'Canceled realization of $app'" EXIT
