@@ -37,7 +37,10 @@
                 app='${exe}'
                 path='${builtins.unsafeDiscardStringContext exePath}'
 
-                if which "$app" 2>&1 >/dev/null; then
+                maybeApp="$(which "$app" 2>&1 >/dev/null)"
+                exit_status=$?
+                if [ $exit_status -eq 0 ] && [ -x "$maybeApp" ] && [ "$(realpath "''${maybeApp:-}")" != "$(realpath "${placeholder "out"}/bin/${exe}")" ]; then
+                  echo "$(realpath "$maybeApp")" "$path"
                   exec "$app" "$@"
                 fi
 
